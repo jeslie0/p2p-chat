@@ -8,4 +8,4 @@ This is an ongoing project to implement a p2p chat service in Haskell.
 * Ports
 The server will use the host machines ip address. The port is 1995.
 * Compiling
-I manage to get this to work by running "cabal build-new" in the main directory, then searching about in dist-newstyle for the executables.
+I manage to get this to work by running "cabal new-build" in the main directory, then searching about in dist-newstyle for the executables.
