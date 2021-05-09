@@ -14,12 +14,16 @@ getHi sock = do
 sendHi :: Socket -> IO ()
 sendHi sock = do
   myMsg <- getLine
-  sendAll sock $ C.pack myMsg
-  sendHi sock
+  if myMsg == "[^" then do
+    close sock
+    else do
+    sendAll sock $ C.pack myMsg
+    sendHi sock
 
 communicate :: Socket -> IO ()
 communicate sock = do
   (soc, _) <- accept sock
+  print "Connected (I think). Type '[^' to close connection."
   forkIO $ getHi soc
   sendHi soc
 
@@ -41,6 +45,7 @@ connectToOther = do
   sock <- socket AF_INET Stream defaultProtocol
   connect sock (addrAddress serverAddr)
 
+  print "Connected (I think). Type '[^' to close connection."
   forkIO $ getHi sock
   sendHi sock
 
