@@ -6,6 +6,6 @@ This is an ongoing project to implement a p2p chat service in Haskell.
 - Main.hs is just a testing ground for the project. It should not be used.
 - P2P.hs does not work as intended yet. I need to make figure out how to kill threads upon certain conditions.
 * Ports
-The server will use the host machines ip address. The port is 1995.
+The server will use the host machines ip address. The port is 2000.
 * Compiling
 I manage to get this to work by running "cabal new-build" in the main directory, then searching about in dist-newstyle for the executables.

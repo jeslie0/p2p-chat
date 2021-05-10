@@ -5,16 +5,24 @@ import Network.Socket.ByteString (recv, sendAll)
 import Control.Concurrent
 import qualified Data.ByteString.Char8 as C
 
+import Data.List
+
 getHi :: Socket -> IO ()
 getHi sock = do
   msg <- recv sock 1024
-  print $ C.unpack msg
-  getHi sock
+  let unpackedMsg = C.unpack msg
+  if "!EXIT" `isSubsequenceOf` unpackedMsg then do
+    print "Client disconnected"
+    close sock
+    else do
+    print unpackedMsg
+    getHi sock
 
 sendHi :: Socket -> IO ()
 sendHi sock = do
   myMsg <- getLine
-  if myMsg == "[^" then do
+  if "!EXIT" `isSubsequenceOf` myMsg then do
+    sendAll sock $ C.pack "!Exit"
     close sock
     else do
     sendAll sock $ C.pack myMsg
@@ -23,7 +31,7 @@ sendHi sock = do
 communicate :: Socket -> IO ()
 communicate sock = do
   (soc, _) <- accept sock
-  print "Connected (I think). Type '[^' to close connection."
+  print "Connected (I think). Type '!EXIT' to close connection."
   forkIO $ getHi soc
   sendHi soc
 
@@ -45,7 +53,7 @@ connectToOther = do
   sock <- socket AF_INET Stream defaultProtocol
   connect sock (addrAddress serverAddr)
 
-  print "Connected (I think). Type '[^' to close connection."
+  print "Connected (I think). Type '!EXIT' to close connection."
   forkIO $ getHi sock
   sendHi sock
 
@@ -54,14 +62,20 @@ connectToOther = do
 
 hostServer :: (Socket -> IO ()) -> IO ()
 hostServer f = do
-  addrInfos <- getAddrInfo
-               (Just (defaultHints
-                      {addrFlags = [AI_PASSIVE]}))
-               Nothing  (Just "1995")
-  let serverAddr = head addrInfos
-  sock <- socket (addrFamily serverAddr) Stream defaultProtocol
-  bind sock (addrAddress serverAddr)
+  (sock, sockAddr) <- makeLocalSocket 2000
+  bind sock sockAddr
   listen sock 1
 
   f sock
   close sock
+
+
+makeLocalSocket :: PortNumber -> IO (Socket , SockAddr)
+makeLocalSocket port = do
+  addrInfos <- getAddrInfo
+               (Just (defaultHints
+                      {addrFlags = [AI_PASSIVE]}))
+               Nothing  (Just $ show port)
+  let serverAddr = head addrInfos
+  sock <- socket (addrFamily serverAddr) Stream defaultProtocol
+  return (sock , addrAddress serverAddr)

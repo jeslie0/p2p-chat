@@ -6,7 +6,7 @@ import qualified Data.ByteString.Char8 as C
 
 import Control.Concurrent
 
-import Chat.Helpers
+import Chat.Helpers ( communicate, hostServer )
 
 
 
