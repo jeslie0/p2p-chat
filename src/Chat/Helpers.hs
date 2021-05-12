@@ -3,11 +3,12 @@ module Chat.Helpers where
 import Network.Socket hiding (recv)
 import Network.Socket.ByteString (recv, sendAll)
 import Control.Concurrent
-import qualified Data.ByteString.Char8 as C
-
 import System.IO
 
+import qualified Data.ByteString.Char8 as C
 import Data.List
+
+
 
 getHi :: Socket -> IO ()
 getHi sock = do
@@ -33,39 +34,6 @@ sendHi sock = do
     sendAll sock $ C.pack (myMsg ++ ['\n'])
     sendHi sock
 
--- communicate :: Socket -> IO ()
--- communicate sock = do
---   (soc, _) <- accept sock
---   threadGet <- forkIO $ getHi soc
---   threadSend <- forkIO $ do
---     sendHi soc
---     killThread threadGet
---   communicate sock
-
-
-
-connectToOther :: IO ()
-connectToOther = do
-  putStrLn "Enter desired IP or url: "
-  ip <- getLine
-  putStrLn "Enter desired port: "
-  port <- getLine
-
-  addrInfo <- getAddrInfo (Just (defaultHints
-                                 {addrFlags = [AI_PASSIVE]}))
-              (Just ip) --fix
-              (Just port) --fix
-  let serverAddr = head addrInfo
-
-  sock <- socket AF_INET Stream defaultProtocol
-  connect sock (addrAddress serverAddr)
-
-  forkIO $ getHi sock
-  sendHi sock
-
-
-
-
 
 makeLocalSocket :: PortNumber -> IO (Socket , SockAddr)
 makeLocalSocket port = do
@@ -76,9 +44,6 @@ makeLocalSocket port = do
   let serverAddr = head addrInfos
   sock <- socket (addrFamily serverAddr) Stream defaultProtocol
   return (sock , addrAddress serverAddr)
-
-
-
 
 
 exitCommand :: C.ByteString -> Bool

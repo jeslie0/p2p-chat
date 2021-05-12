@@ -41,10 +41,12 @@ listenAndSendServer socsMvar sock = do
   sendAll soc $ C.pack "Enter username: "
   username <- recv soc 1024
   let cleanUserName = cleanMsg username
+
   sendAll soc $ C.pack "Hello " `mappend` cleanUserName `mappend` C.pack ("! Type `!EXIT` to leave" ++ ['\n'])
 
   socs <- readMVar socsMvar
   mapM_ (`sendAll` (cleanUserName `mappend` C.pack (" has joined the chat." ++ ['\n']))) (filter (/= soc) socs)
+  print $ C.unpack cleanUserName ++ " has joined the chat."
 
   forkIO $ serverThreadApp socsMvar cleanUserName soc
   listenAndSendServer socsMvar sock
@@ -59,6 +61,7 @@ serverThreadApp socsMvar username sock = do
     gracefulClose sock 5
     modifyMVar_ socsMvar $ \soc' -> return $ delete sock soc'
     mapM_ (`sendAll` (username `mappend` C.pack (" has left the chat." ++ ['\n']))) socs
+    print $ C.unpack username ++ " has left the chat."
 
     else do
     let niceMsg = username `mappend` C.pack ": " `mappend` msg
