@@ -8,9 +8,9 @@ import Control.Concurrent
 import Chat.Helpers
 
 main :: IO ()
-main = do
+main = undefined
 -- Set up remote location to connect to
-  forkIO  connectToOther
+  -- forkIO  connectToOther
 
   -- Set up socket to listen on
-  hostServer  communicate
+  -- hostServer 2000  communicate

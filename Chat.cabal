@@ -24,7 +24,8 @@ extra-source-files: CHANGELOG.md
 executable Chat
     main-is:          Main.hs
 
-    build-depends:    base ^>=4.14.1.0,
+    build-depends:    async >= 2.2.3,
+                      base ^>=4.14.1.0,
                       bytestring >= 0.10.12.0,
                       network >= 3.1.2.1
     hs-source-dirs:   app
@@ -33,17 +34,19 @@ executable Chat
 library
   hs-source-dirs:      src
   exposed-modules:     Chat.Helpers
-  build-depends:       base ^>=4.14.1.0,
+  build-depends:       async >= 2.2.3,
+                       base ^>=4.14.1.0,
                        bytestring >= 0.10.12.0,
                        network >= 3.1.2.1
 
 executable Server
     main-is:          Server.hs
 
-    build-depends:    base ^>=4.14.1.0,
+    build-depends:    Chat,
+                      async >= 2.2.3,
+                      base ^>=4.14.1.0,
                       bytestring >= 0.10.12.0,
-                      network >= 3.1.2.1,
-                      Chat
+                      network >= 3.1.2.1
 
     hs-source-dirs:   app
     ghc-options:      -main-is Server
@@ -53,10 +56,11 @@ executable Server
 executable Client
     main-is:          Client.hs
 
-    build-depends:    base ^>=4.14.1.0,
+    build-depends:    Chat,
+                      async >= 2.2.3,
+                      base ^>=4.14.1.0,
                       bytestring >= 0.10.12.0,
-                      network >= 3.1.2.1,
-                      Chat
+                      network >= 3.1.2.1
     hs-source-dirs:   app
     ghc-options:      -main-is Client
     default-language: Haskell2010
@@ -65,10 +69,11 @@ executable Client
 executable P2P
     main-is:          P2P.hs
 
-    build-depends:    base ^>=4.14.1.0,
+    build-depends:    Chat,
+                      async >= 2.2.3,
+                      base ^>=4.14.1.0,
                       bytestring >= 0.10.12.0,
-                      network >= 3.1.2.1,
-                      Chat
+                      network >= 3.1.2.1
     hs-source-dirs:   app
     ghc-options:      -main-is P2P
     default-language: Haskell2010
